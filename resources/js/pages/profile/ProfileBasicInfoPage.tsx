@@ -3,7 +3,7 @@ import {
   getProfile,
   updateProfile,
   type ProfileForm,
-} from "../../services/profileService";
+} from "../../services/profileServices";
 
 type FormErrors = Partial<Record<keyof ProfileForm, string>>;
 
