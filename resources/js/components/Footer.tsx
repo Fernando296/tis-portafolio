@@ -1,14 +1,17 @@
-import React from 'react';
+import React from "react";
+import "./Footer.css";
 
 export default function Footer() {
-    return (
-        <footer style={{ textAlign: 'center', padding: '1.5rem', backgroundColor: '#212529', color: '#f8f9fa', marginTop: 'auto' }}>
-            <div style={{ marginBottom: '0.5rem' }}>
-                &copy; {new Date().getFullYear()} Ingeniería de Software. Todos los derechos reservados.
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#adb5bd' }}>
-                Construido con React y Laravel Vite
-            </div>
-        </footer>
-    );
+  return (
+    <footer className="app-footer">
+      <div className="app-footer__text">
+        &copy; {new Date().getFullYear()} Generador de portafolios. Todos los
+        derechos reservados.
+      </div>
+
+      <div className="app-footer__subtext">
+        Construido con React y Laravel Vite
+      </div>
+    </footer>
+  );
 }

@@ -1,0 +1,54 @@
+.app-footer {
+  width: 100%;
+  text-align: center;
+  padding: 20px 16px;
+  background-color: #212529;
+  color: #f8f9fa;
+  margin-top: auto;
+  box-sizing: border-box;
+}
+
+.app-footer__text {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.app-footer__subtext {
+  font-size: 0.875rem;
+  color: #adb5bd;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* TABLET */
+@media (max-width: 768px) {
+  .app-footer {
+    padding: 18px 14px;
+  }
+
+  .app-footer__text {
+    font-size: 0.95rem;
+  }
+
+  .app-footer__subtext {
+    font-size: 0.82rem;
+  }
+}
+
+/* CELULAR */
+@media (max-width: 480px) {
+  .app-footer {
+    padding: 16px 12px;
+  }
+
+  .app-footer__text {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .app-footer__subtext {
+    font-size: 0.78rem;
+  }
+}
