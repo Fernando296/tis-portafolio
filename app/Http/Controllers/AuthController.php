@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -118,5 +119,51 @@ class AuthController extends Controller
         }
 
         return $slug;
+    }
+    
+    public function login(Request $request)
+{
+    $data = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required', 'string'],
+    ], [
+        'email.required' => 'Este campo es obligatorio',
+        'email.email' => 'Correo electrónico no válido',
+        'password.required' => 'Este campo es obligatorio',
+    ]);
+
+    $usuario = Usuario::where('email', $data['email'])->first();
+
+    if (!$usuario || !Hash::check($data['password'], $usuario->password_hash)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    if (!$usuario->activo) {
+        return response()->json(['message' => 'Usuario inactivo'], 403);
+    }
+
+    $usuario->ultimo_acceso = now();
+    $usuario->save();
+
+    $token = $usuario->createToken('API Token')->plainTextToken;
+
+    return response()->json([
+        'user' => [
+            'id_usuario' => $usuario->id_usuario,
+            'nombre' => $usuario->nombre,
+            'apellido' => $usuario->apellido,
+            'email' => $usuario->email,
+            'slug' => $usuario->slug,
+            'rol' => $usuario->rol,
+        ],
+        'token' => $token,
+    ]);
+}
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out']);
     }
 }

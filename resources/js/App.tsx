@@ -1,25 +1,70 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Login from './components/Login';
 import Layout from './components/Layout';
+type User = {
+    id_usuario: number;
+    nombre: string;
+    apellido?: string | null;
+    email: string;
+    slug?: string;
+    rol?: string;
+};
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        if (!token) return;
+
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        axios.get('/api/user')
+            .then((response) => {
+                setUser(response.data);
+                setIsLoggedIn(true);
+            })
+            .catch(() => {
+                localStorage.removeItem('token');
+                delete axios.defaults.headers.common['Authorization'];
+                setUser(null);
+                setIsLoggedIn(false);
+            });
+    }, []);
+
+    const handleLogin = (token: string, userData: User) => {
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setUser(userData);
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await axios.post('/api/logout');
+        } catch (error) {
+        } finally {
+            localStorage.removeItem('token');
+            delete axios.defaults.headers.common['Authorization'];
+            setUser(null);
+            setIsLoggedIn(false);
+        }
+    };
     return (
         <Layout>
-            prueba
+            {isLoggedIn ? (
+                <div>
+                    <h1>Bienvenido, {user?.nombre}!</h1>
+                    <button onClick={handleLogout}>Logout</button>
+                </div>
+            ) : (
+                <Login onLogin={handleLogin} />
+            )}
         </Layout>
     );
 }
 
-import ReactDOM from "react-dom/client";
-import ProfileBasicInfoPage from "./pages/profile/ProfileBasicInfoPage";
-import "../css/app.css";
-
-const root = document.getElementById("app");
-
-if (root) {
-  ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-      <ProfileBasicInfoPage />
-    </React.StrictMode>
-  );
-}
   

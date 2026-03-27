@@ -17,14 +17,20 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens; //estube poniendo
 
 class Usuario extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
-    public $timestamps = false;
+    //public $timestamps = false;
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    const CREATED_AT = 'fecha_registro';
+    const UPDATED_AT = 'updated_at';
 
     protected $fillable = [
         'email',
@@ -32,14 +38,28 @@ class Usuario extends Authenticatable
         'slug',
         'nombre',
         'apellido',
+        'profesion',
+        'biografia',
+        'foto_url',
+        'ciudad',
+        'pais',
+        'telefono',
+        'sitio_web',
         'rol',
         'activo',
         'fecha_registro',
+        'ultimo_acceso',
         'updated_at',
     ];
 
     protected $hidden = [
         'password_hash',
+    ];
+    protected $casts = [
+        'activo' => 'boolean',
+        'fecha_registro' => 'datetime',
+        'ultimo_acceso' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function getAuthPassword()
