@@ -12,7 +12,7 @@ export default function Header() {
                 <a href="#" style={{ margin: '0 15px', textDecoration: 'none', color: '#555' }}>Acerca de</a>
             </nav>
             <div>
-                <a href="#" style={{ padding: '0.5rem 1rem', backgroundColor: '#0d6efd', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>Contacto</a>
+                <a href="/Registrarse" style={{ padding: '0.5rem 1rem', backgroundColor: '#0d6efd', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>Registrarse</a>
             </div>
         </header>
     );
