@@ -13,6 +13,17 @@ export type ApiProfileResponse = {
 
 const PROFILE_ENDPOINT = "/api/profile/basic-info";
 
+/*  FUNCIÓN CLAVE: obtiene el token guardado del login */
+function authHeaders() {
+  const token = localStorage.getItem("token");
+
+  return {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`, // ← aquí se envía el token
+  };
+}
+
 function normalizeProfile(data?: Partial<ProfileForm> | null): ProfileForm {
   return {
     nombre: data?.nombre?.trim() ?? "",
@@ -36,12 +47,11 @@ async function parseJsonSafe(response: Response) {
   }
 }
 
+/*  OBTENER PERFIL (GET) */
 export async function getProfile(): Promise<ProfileForm> {
   const response = await fetch(PROFILE_ENDPOINT, {
     method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
+    headers: authHeaders(), // ← ahora envía el token automáticamente
   });
 
   const payload = (await parseJsonSafe(response)) as ApiProfileResponse;
@@ -57,13 +67,11 @@ export async function getProfile(): Promise<ProfileForm> {
   return normalizeProfile(payload.data);
 }
 
+/*  GUARDAR PERFIL (PUT) */
 export async function updateProfile(profile: ProfileForm): Promise<ApiProfileResponse> {
   const response = await fetch(PROFILE_ENDPOINT, {
     method: "PUT",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
+    headers: authHeaders(), // ← token incluido aquí también
     body: JSON.stringify(profile),
   });
 
