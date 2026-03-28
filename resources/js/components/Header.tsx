@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Header.css";
+import logo from "../assets/Registro/logo_Codegos.png";
+type User = {
+  id_usuario?: number;
+  nombre?: string;
+  apellido?: string | null;
+  email?: string;
+  slug?: string;
+  rol?: string;
+};
 
 type HeaderProps = {
   estaAutenticado?: boolean;
@@ -7,13 +16,17 @@ type HeaderProps = {
 };
 
 export default function Header({
-  estaAutenticado = false,
-  nombreUsuario = "Usuario",
+  estaAutenticado,
+  nombreUsuario,
 }: HeaderProps) {
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [autenticadoLocal, setAutenticadoLocal] = useState(false);
+  const [usuarioLocal, setUsuarioLocal] = useState<User | null>(null);
+  const [tokenActual, setTokenActual] = useState<string | null>(
+    localStorage.getItem("token")
+  );
 
-  const inicial = nombreUsuario.charAt(0).toUpperCase();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -28,13 +41,87 @@ export default function Header({
     };
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const token = localStorage.getItem("token");
+      setTokenActual((prev) => (prev !== token ? token : prev));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (!tokenActual) {
+      setAutenticadoLocal(false);
+      setUsuarioLocal(null);
+      return;
+    }
+
+    fetch("/api/user", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${tokenActual}`,
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      credentials: "include",
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error("No autenticado");
+        }
+
+        const data = await response.json();
+        setUsuarioLocal(data);
+        setAutenticadoLocal(true);
+      })
+      .catch(() => {
+        setAutenticadoLocal(false);
+        setUsuarioLocal(null);
+      });
+  }, [tokenActual]);
+
+  const autenticadoFinal =
+    typeof estaAutenticado === "boolean" ? estaAutenticado : autenticadoLocal;
+
+  const nombreFinal =
+    nombreUsuario ||
+    usuarioLocal?.nombre ||
+    usuarioLocal?.email ||
+    "Usuario";
+
+  const inicial = nombreFinal.charAt(0).toUpperCase();
+
+  const handleLogout = async () => {
+    setMenuAbierto(false);
+
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          ...(tokenActual ? { Authorization: `Bearer ${tokenActual}` } : {}),
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        credentials: "include",
+      });
+    } catch (error) {
+    } finally {
+      localStorage.removeItem("token");
+      setTokenActual(null);
+      setAutenticadoLocal(false);
+      setUsuarioLocal(null);
+      window.location.href = "/";
+    }
+  };
+
   return (
     <header className="header">
-      <div className="header__logo">Generador de portafolios</div>
-
-      
-
-      {!estaAutenticado ? (
+      <div className="header__logo">
+        <img src={logo} alt="logo" className="header__logo-img" />
+        <span>Generador de portafolios</span>
+      </div>
+      {!autenticadoFinal ? (
         <div className="header__actions">
           <a href="/Registrarse" className="header__register">
             Registrarse
@@ -46,7 +133,7 @@ export default function Header({
             className="header__user-button"
             onClick={() => setMenuAbierto(!menuAbierto)}
           >
-            <span className="header__user-name">{nombreUsuario}</span>
+            <span className="header__user-name">{nombreFinal}</span>
             <div className="header__avatar">{inicial}</div>
           </button>
 
@@ -67,10 +154,7 @@ export default function Header({
 
             <button
               className="header__dropdown-item header__dropdown-item--danger"
-              onClick={() => {
-                setMenuAbierto(false);
-                window.location.href = "/";
-              }}
+              onClick={handleLogout}
             >
               Cerrar sesión
             </button>

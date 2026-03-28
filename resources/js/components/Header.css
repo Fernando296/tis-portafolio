@@ -236,3 +236,16 @@
     width: 200px;
   }
 }
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.header__logo-img {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+}
