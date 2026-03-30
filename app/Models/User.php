@@ -22,12 +22,24 @@ class User extends Authenticatable
         'apellido',
         'email',
         'password',
+        'password_hash',
+        'slug',
         'profesion',
-        'biografia'
+        'biografia',
     ];
 
     protected $hidden = [
-        'password',
+        'password_hash',
         'remember_token',
     ];
+
+    /**
+     * Get the password for the user.
+     *
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
 }

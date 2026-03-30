@@ -1,0 +1,7 @@
+﻿resources/js/components/Footer.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+resources/js/components/Header.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+resources/js/components/Layout.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+resources/js/components/Mensajes/RegistroResultadoCard.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+resources/js/components/Mensajes/RegistroResultadoCard.tsx(14,3): error TS6133: 'onVolver' is declared but its value is never read.
+resources/js/main.tsx(2,1): error TS6133: 'React' is declared but its value is never read.
+resources/js/pages/profile/ProfileBasicInfoPage.tsx(32,10): error TS6133: 'errors' is declared but its value is never read.

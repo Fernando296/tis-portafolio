@@ -12,9 +12,10 @@ type User = {
 
 interface LoginProps {
     onLogin: (token: string, user: User) => void;
+    onForgotPassword?: () => void;
 }
 
-export default function Login({ onLogin }: LoginProps) {
+export default function Login({ onLogin, onForgotPassword }: LoginProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -27,7 +28,6 @@ export default function Login({ onLogin }: LoginProps) {
             onLogin(token, user);
             setError('');
         } catch (err:any) {
-            //setError('Invalid credentials');
             setError(err.response?.data?.message || 'Error al iniciar sesión');
         }
     };
@@ -69,6 +69,7 @@ export default function Login({ onLogin }: LoginProps) {
                         required
                         style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: 'none' }}
                     />
+                    {/* Error debajo de Email */}
                     {error && <span style={errorSmallStyle}>{error}</span>}
                 </div>
 
@@ -84,10 +85,9 @@ export default function Login({ onLogin }: LoginProps) {
                     {error && <span style={errorSmallStyle}>{error}</span>}
                 </div>
 
-                <p style={forgotPasswordStyle}>
+                <p style={forgotPasswordStyle} onClick={onForgotPassword}>
                     ¿olvidaste tu contraseña?
                 </p>
-
                 <button
                     type="submit"
                     style={{

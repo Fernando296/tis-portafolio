@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from './lib/axios';
 import Login from './components/Login';
+import RestaContra from './components/RestaContra';
 import Layout from './components/Layout';
+
 type User = {
     id_usuario: number;
     nombre: string;
@@ -12,9 +14,9 @@ type User = {
 };
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null);
-
+    const [showRestaContra, setShowRestaContra] = useState(false);
     useEffect(() => {
         const token = localStorage.getItem('token');
 
@@ -61,10 +63,14 @@ export default function App() {
                     <button onClick={handleLogout}>Logout</button>
                 </div>
             ) : (
-                <Login onLogin={handleLogin} />
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    {showRestaContra ? (
+                        <RestaContra onSuccess={() => setShowRestaContra(false)} onCancel={() => setShowRestaContra(false)} />
+                    ) : (
+                        <Login onLogin={handleLogin} onForgotPassword={() => setShowRestaContra(true)} />
+                    )}
+                </div>
             )}
         </Layout>
     );
 }
-
-  
